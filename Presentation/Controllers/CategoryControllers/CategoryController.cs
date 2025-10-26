@@ -1,4 +1,5 @@
 ﻿using Application.IServices.ICategoryServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers.CategoryControllers;
@@ -13,7 +14,6 @@ public class CategoryController : ControllerBase
     {
         _categoryService = categoryService;
     }
-
     [HttpGet("GetCategoryList")]
     public async Task<IActionResult> GetAllCategory()
     {
@@ -21,6 +21,7 @@ public class CategoryController : ControllerBase
         return result.Succeeded ? Ok(result) : NotFound(result);
     } 
     
+    [Authorize]
     [HttpPost("Create")]
     public async Task<IActionResult> Create(string categoryName)
     {
