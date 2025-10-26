@@ -40,5 +40,6 @@ This project was built as a **self-learning exercise** to:
    ```bash
    git clone (https://github.com/eng-mohamed-hussein7/Route-CRUDs.git)
 
-   ```OR Use Live Demo
+2. Use Live Demo:
+   ```bash
    https://route-cruds.runasp.net/swagger/index.html
