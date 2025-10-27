@@ -97,16 +97,16 @@ public class ProductService : IProductService
         try
         {
             var repo = _unitOfWork.Repository<Product>();
-            var existing = await repo.GetByIdAsync(id);
+            var existing = await repo.FirstOrDefaultAsync(i=>i.Id==id,includes: b=>b.Category);
 
             if (existing == null)
                 return Result.Failure("Product not found.", status: StatusResult.NotExists);
 
-            var product = new ProductDTO
+            var product = new ProductByIdDTO
             {
                 Id = existing.Id,
                 ImageURL= existing.ImageURL,
-                ProductCategory= existing.Category.Name,
+                ProductCategory= existing.CategoryId,
                 ProductDescription= existing.ProductDescription,
                 ProductName= existing.ProductName,
                 ProductPrice = existing.ProductPrice,
@@ -130,7 +130,7 @@ public class ProductService : IProductService
             var name = productName.Trim().ToLowerInvariant();
 
             var Products = await _unitOfWork.Repository<Product>()
-                .WhereAsync(b=> b.ProductName.ToLower().Contains(productName));
+                .WhereAsync(b=> b.ProductName.ToLower().Contains(productName),includes: b=>b.Category);
 
             if (!Products.Any())
                 return Result.Failure($"No Products found.", status: StatusResult.NotExists);
@@ -168,7 +168,11 @@ public class ProductService : IProductService
             existing.ProductDescription = dto.ProductDescription;
             existing.ProductPrice = dto.ProductPrice;
             existing.CategoryId = dto.ProductCategoryId;
+            if (dto.Image != null)
+            {
+                
             existing.ImageURL = await _imageUploader.UploadImageAsync(dto.Image);
+            }
 
             repo.Update(existing);
             await _unitOfWork.SaveChangesAsync();
